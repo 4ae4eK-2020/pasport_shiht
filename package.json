@@ -12,6 +12,7 @@
     "@fastify/autoload": "^5.10.0",
     "ajax": "^0.0.4",
     "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
     "fastify": "^4.28.0",
     "pg-pool": "^3.6.2"
   }

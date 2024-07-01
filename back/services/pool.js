@@ -25,5 +25,4 @@ pool.on('remove', client => {
 
 module.exports = {
     pool: pool,
-    
 };

@@ -1,4 +1,4 @@
-const Pool = require("pg-pool")
+const { pool } = require('../dependencies')
 
 async function Test(object) {
     const data = {
@@ -8,7 +8,7 @@ async function Test(object) {
 
     const funcName = "Test"
 
-    const client = Pool.connect()
+    const client = await pool.connect()
 
     try {
         data.message = "test complieted"

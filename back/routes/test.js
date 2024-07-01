@@ -1,27 +1,27 @@
 const { Test } = require('../handlers/test')
-const fastify = require("fastify");
-
-fastify.route({
-    method: 'GET',
-    url: '/',
-    schema:{
-        querystring: {
-            name: {type: 'string'}
-        },
-        response: {
-            200: {
-                type: 'object',
-                properties: {
-                    test: {type: 'string'}
+module.exports = function(fastify, opts, next) {
+    fastify.route({
+        method: 'GET',
+        url: '/',
+        schema:{
+            querystring: {
+                name: {type: 'string'}
+            },
+            response: {
+                200: {
+                    type: 'object',
+                    properties: {
+                        test: {type: 'string'}
+                    }
                 }
             }
+        },
+        async handler(request, reply) {
+            const data = await Test(request.body)
+            reply.status(data.statusCode)
+            reply.send(data.message)
         }
-    },
-    handler: async function (request, reply) {
-        const data = await Test()
-        reply.statusCode = data.statusCode
-        reply.send(data.message)
-    }
-})
-
-next()
+    })
+    
+    next()
+}

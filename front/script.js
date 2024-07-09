@@ -6,7 +6,8 @@ function enter() {
     const xhttp = new XMLHttpRequest()
 
     xhttp.onload = () => {
-        xhttp.open("POST", "localhost:3000/user")
+        xhttp.open("POST", "localhost:3000/user", true)
+        xhttp.send(`name=${login}&password=${password}`)
     }
 
     if(login == "admin" && password =="1234") {

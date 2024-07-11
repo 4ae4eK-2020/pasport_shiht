@@ -2,14 +2,14 @@ require('dotenv').config();
 
 const autoload = require('@fastify/autoload');
 const path = require('path');
-//const cors = require('cors') *Удалить библиоткеку и поставить npm i @fastify/cors*
+const cors = require('@fastify/cors')
 const fastify = require('fastify')({
     logger: true,
 });
 fastify.register(autoload, {
     dir: path.join(__dirname, './routes'),
 });
-/*fastify.register(cors, {
+fastify.register(cors, {
     origin: (origin, callback) => {
         const hostName = new URL(origin).hostname
         if(hostName === "localhost") {
@@ -17,7 +17,7 @@ fastify.register(autoload, {
             return
         }
     }
-})*/
+})
 
 const start = async () => {
     try {

@@ -2,7 +2,9 @@ require('dotenv').config();
 
 const autoload = require('@fastify/autoload');
 const path = require('path');
-const cors = require('@fastify/cors')
+const cors = require('@fastify/cors');
+const { sign } = require('crypto');
+const authMidleware = require('./midlewares/auth');
 const fastify = require('fastify')({
     logger: true,
 });
@@ -16,6 +18,15 @@ fastify.register(cors, {
             callback(null, true)
             return
         }
+    }
+})
+
+fastify.addHook('preHandler', authMidleware)
+
+fastify.register(require('@fastify/jwt'), {
+    secret: process.env.SECRET_KEY,
+    sign: {
+        expiresIn: '30min'
     }
 })
 

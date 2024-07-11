@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "fastify": "^4.28.0",
+    "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "pg-pool": "^3.6.2"
   }

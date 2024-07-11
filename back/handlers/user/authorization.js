@@ -1,6 +1,5 @@
+const bcryptjs = require('bcryptjs')
 const { pool } = require('../../dependencies')
-//const { bcrypt } = require('bcryptjs')
-const user = require('../../routes/user')
 
 async function Authorization(object) {
     //Объект с данными
@@ -13,27 +12,19 @@ async function Authorization(object) {
 
     try {
         //получаем данные с БД
-        const users = client.query(`SELECT name, password FROM "Users" WHERE name = $1`, [object.name])
+        const users = await client.query(`SELECT "password" FROM "Users" WHERE "name" = $1`, [object.login])
         if(users.rows.length == 0) {
             data.message = 'неверный логин'
             data.statusCode = 401
             return data
         }
         
-        if(user.rows[0] != 1234) {
+        //Проверка пароля
+        if(!bcryptjs.compareSync(object.password, users.rows[0].password)) {
             data.message = "неверный пароль"
             data.statusCode = 401
             return data
         }
-
-        //Шифруем пароль
-        /*const password = bcrypt.hashSync(object.password, 10)
-        console.log(password)
-        if(!bcrypt.compareSync(object.password, password)) {
-            data.message = "неверный пароль"
-            data.statusCode = 401
-            return data
-        }*/
 
         data.message = "success"
         data.statusCode = 200

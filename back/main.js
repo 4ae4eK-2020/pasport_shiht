@@ -2,12 +2,14 @@ require('dotenv').config();
 
 const autoload = require('@fastify/autoload');
 const path = require('path');
+//const cors = require('cors')
 const fastify = require('fastify')({
     logger: true,
 });
 fastify.register(autoload, {
     dir: path.join(__dirname, './routes'),
 });
+//~fastify.register(cors({origin: true}))
 
 const start = async () => {
     try {

@@ -12,11 +12,54 @@
     src: url("./data/Fonts/Montserrat-Medium.ttf");
 }
 
+@font-face {
+    font-family: "Montserrat Bold";
+    font-style: initial;
+    font-weight: 400;
+    src: url("./data/Fonts/Montserrat-SemiBold.ttf");
+}
+
 h3 {
     font-family: Montserrat;
     font-style: normal;
     font-size: 27px;
     line-height: 33px;
+}
+
+a {
+    color: #324566 !important;
+    font-family: "Montserrat";
+    font-style: normal;
+    font-size: 15px;
+    text-align: start;
+    line-height: 20px;
+    text-decoration: solid underline #324566 2px !important;
+}
+
+span {
+    font-family: Montserrat;
+    font-style: normal;
+    font-size: 14px;
+}
+
+table {
+    border-collapse: separate;
+    overflow: hidden;
+  }
+  
+  th, td {
+    border: 2px solid #333;
+  }
+  
+thead tr:first-child th:first-child { border-top-left-radius: 15px; }
+thead tr:first-child th:last-child { border-top-right-radius: 15px; }
+
+tbody tr:last-child td:first-child { border-bottom-left-radius: 15px; }
+tbody tr:last-child td:last-child { border-bottom-right-radius: 15px; }
+
+.bold {
+    font-family: "Montserrat Bold";
+    font-style: initial;
 }
 
 .butn {
@@ -33,14 +76,29 @@ h3 {
     line-height: 33px;
 }
 
-a {
-    color: #324566 !important;
+.back {
+    background-color: #F2F2F2;
+    border-radius: 15px;
+}
+
+.print {
+    background-color: #363636; 
+    border-radius: 20px; 
+    color: #FFFFFF; 
+    border: 0;
     font-family: "Montserrat";
-    font-style: normal;
-    font-size: 15px;
-    text-align: start;
-    line-height: 20px;
-    text-decoration: solid underline #324566 2px !important;
+    font-style: unset;
+    font-size: 27px;
+    max-width: 351px !important;
+    min-height: 50px !important;
+    text-align: center;
+    line-height: 33px;
+}
+
+.b-rad {
+    border: 1px;
+    border-radius: 15px;
+    border: 0px;
 }
 
 ::placeholder {

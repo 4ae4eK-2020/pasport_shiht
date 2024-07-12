@@ -29,7 +29,7 @@ async function Authorization(object) {
         data.message = "success"
         data.statusCode = 200
     } catch (error) {
-        console.error(error)
+        console.error(error.name, error.stack)
         data.message = error.name
         data.statusCode = 500
     } finally {

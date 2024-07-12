@@ -1,16 +1,23 @@
-const authMidleware = async (request, reply) => {
-    try {
-        let decoded = await request.jwtVerify()
-        if(!decoded) {
-            reply.send({
-                message: 'Token is not valid',
-                statusCode: 401
-            })
+require('dotenv').config();
+const fastifyJwt = require('@fastify/jwt')
+const fp = require('fastify-plugin')
+
+async function auth(fastify, opts, next) {
+    fastify.register(fastifyJwt, {
+        secret: process.env.SECRET_KEY,
+        sign: {
+            expiresIn: '30min'
         }
-        request.jwtPayload = decoded
-    } catch (err) {
-        reply.status(403).send({ message: 'verify error: ' + err.message})
-    }
+    })
+    fastify.decorate('authenticate', async function (request, reply) {
+        try {
+            const token = request.headers.Accept
+            await request.jwtVerify(token)
+        } catch (err) {
+            console.log(err.name, err.stack)
+            reply.send(err)
+        }
+    })
 }
 
-module.exports = authMidleware
+module.exports = fp(auth, { fastify: '>=1.0.0' })

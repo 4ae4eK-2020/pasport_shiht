@@ -3,31 +3,28 @@ require('dotenv').config();
 const autoload = require('@fastify/autoload');
 const path = require('path');
 const cors = require('@fastify/cors');
-const { sign } = require('crypto');
-const authMidleware = require('./midlewares/auth');
+const auth = require('./midlewares/auth');
 const fastify = require('fastify')({
-    logger: true,
+    logger: {
+        redact: ["headers.authorization"],
+        level: "info",
+    },
 });
 fastify.register(autoload, {
     dir: path.join(__dirname, './routes'),
 });
-fastify.register(cors, {
-    origin: (origin, callback) => {
-        const hostName = new URL(origin).hostname
-        if(hostName === "localhost") {
-            callback(null, true)
-            return
-        }
-    }
+fastify.register((fastify, opts, next) => {
+    fastify.register(cors, {
+        origin: "http://127.0.0.1:5500",
+        methods: ["POST", "GET", "PUT", "DELETE"],
+    })  
+    next()
 })
 
-fastify.addHook('preHandler', authMidleware)
+fastify.register(auth)
 
-fastify.register(require('@fastify/jwt'), {
-    secret: process.env.SECRET_KEY,
-    sign: {
-        expiresIn: '30min'
-    }
+fastify.register(async (fastify, opts) => {
+    fastify.addHook('onRequest', fastify.authenticate)
 })
 
 const start = async () => {

@@ -9,18 +9,27 @@ function enter() {
     let password = document.getElementById("pass").value
     const xhttp = new XMLHttpRequest()
     
-    xhttp.open("POST", "http://localhost:3000/user", true)
-    xhttp.setRequestHeader("Access-Control-Allow-Methods", '*')
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", 'http://localhost:3000')
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Content-Type')
-    xhttp.setRequestHeader("Content-Type", 'application/json')
-    xhttp.send(`name=${login}&password=${password}`)
+    const data = {
+        login: login,
+        password: password
+    }
 
-    if(xhttp.responseText == "success") {
-        window.location.replace("./index.html")
-    } else {
-        alert("uncorrect login or password. Try again")
-        login.value = ""
-        password.value = ""
+    xhttp.open("POST", "http://localhost:3000/user", true)
+    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", '*')
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
+    xhttp.setRequestHeader("Content-Type", "application/json")
+    xhttp.send(Object(JSON.stringify(data)))
+
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+            if(this.responseText == "success") {
+                window.location.replace('./index.html')
+            } else {
+                alert('Uncorrect login or password. Try again!')
+                login.value = ""
+                password.value = ""
+            }
+        }
     }
 }

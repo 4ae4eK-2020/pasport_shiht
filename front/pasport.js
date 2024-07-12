@@ -10,11 +10,11 @@ function loadPassport() {
     const xhttp = new XMLHttpRequest()
     
     //Запрос на получение данных шапки паспорта
-    xhttp.open("GET", "http://localhost:3000/", true)
-    xhttp.setRequestHeader("Access-Control-Allow-Methods", '*')
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", 'http://localhost:3000')
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Content-Type')
-    xhttp.setRequestHeader("Content-Type", 'application/json')
+    xhttp.open("GET", "http://localhost:3000/pasport", true)
+    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", '*')
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
+    xhttp.setRequestHeader("Content-Type", "application/json")
     xhttp.send()
 
     //Ответ сервера

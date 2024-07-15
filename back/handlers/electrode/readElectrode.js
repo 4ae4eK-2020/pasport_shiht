@@ -12,7 +12,7 @@ async function ReadElectrode(object) {
 
     try {
         //Запрос на получение записей
-        const results = await client.query(`SELECT "Charge_types".name AS "charge_type", "Charge_marks".name AS "charge_mark", "Electrode_indexs".name AS "index", "Fractions".name AS "fraction",
+        const results = await client.query(`SELECT "Charge_types".name AS "charge_type", "Charge_marks".name AS "charge_mark", "mass", "Electrode_indexs".name AS "index", "Fractions".name AS "fraction",
                                         vshm, nv, o_content, fe_content, place_number, "Batchs".name AS batch, "Manufacturers".name AS "manufacturer" FROM "Electrodes"
                                             INNER JOIN "Charge_types" ON "Charge_types".id = "Electrodes".charge_type_id
                                             INNER JOIN "Charge_marks" ON "Charge_marks".id = "Electrodes".charge_mark_id

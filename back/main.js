@@ -21,6 +21,10 @@ fastify.register((fastify, opts, next) => {
     next()
 })
 
+fastify.addHook('onRequest', async (request, reply) => {
+    reply.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
+})
+
 fastify.register(auth)
 
 fastify.register(async (fastify, opts) => {

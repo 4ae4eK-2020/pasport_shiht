@@ -9,21 +9,20 @@ function enter() {
     let password = document.getElementById("pass").value
     const xhttp = new XMLHttpRequest()
     
-    const data = {
+    const data = new Object({
         login: login,
         password: password
-    }
+    })
 
     xhttp.open("POST", "http://localhost:3000/user", true)
-    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
-    xhttp.setRequestHeader("Access-Control-Allow-Origin", '*')
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
-    xhttp.setRequestHeader("Content-Type", "application/json")
-    xhttp.send(Object(JSON.stringify(data)))
+    xhttp.setRequestHeader("Access-Control-Allow-Methods", '*')
+    xhttp.setRequestHeader("Access-Control-Allow-Origin", 'http://localhost:3000')
+    xhttp.setRequestHeader("Content-type", 'application/json')
+    xhttp.send(JSON.stringify(data))
 
     xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            if(this.responseText == "success") {
+        if (this.readyState == 4) {
+            if(this.responseText == "success") {    
                 window.location.replace('./index.html')
             } else {
                 alert('Uncorrect login or password. Try again!')

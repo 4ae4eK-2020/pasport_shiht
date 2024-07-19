@@ -11,7 +11,7 @@ function loadPassport() {
     //Создаём экземпляр запроса
     const xhttp = new XMLHttpRequest()
     
-    //Запрос на получение данных шапки паспорта
+    //Запрос на получение данных паспорта
     xhttp.open("GET", "http://localhost:3000/pasport", true)
     xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
     xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
@@ -84,6 +84,58 @@ function loadPassport() {
                     document.getElementById("mass").textContent = massCount.toFixed() + " кг"
                 }
             }
+        }
+    }
+
+    //Запрос на получение данных подвала паспорта
+    xhttp.open("GET", "http://localhost:3000/footer", true)
+    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
+    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
+    xhttp.send()
+
+    //Ответ сервера
+    xhttp.onreadystatechange = function() {
+        function format(date) {
+            var d = date.getDate();
+            var m = date.getMonth() + 1;
+            var y = date.getFullYear();
+            return '' + (d <= 9 ? '0' + d : d) + '-' + (m<=9 ? '0' + m : m) + '-' + y;
+        }
+
+        if (this.readyState == 4 && this.status == 200) {
+            let response = JSON.parse(xhttp.responseText.substring(1, xhttp.responseText.length-1))
+            response = JSON.parse(xhttp.responseText)
+
+            //Заполняем необходимые поля
+            response.forEach((item) =>{
+                const pasportDataArray = Object.keys(item) 
+                console.log(item)
+                //Подготавливаем строку в таблице
+                let tr = document.createElement('tr')
+                let th = document.createElement('th')
+                let date = new Date(item[pasportDataArray[0]])
+                
+                th.textContent = format(date)
+                //Создаём иерархию в таблице
+                tr.appendChild(th)
+
+                    
+
+                for (let index = 1; index < pasportDataArray.length; index++) {
+                    const element = item[pasportDataArray[index]]
+                    let th_element = document.createElement('th')
+                    th_element.textContent = element
+                    tr.appendChild(th_element)
+                }
+
+                for (let i = 0; i < 3; i++) {
+                    let th = document.createElement('th')
+                    tr.appendChild(th)
+                }
+                    
+                    //Запихиваем готовую строку в таблицу
+                    document.getElementById("pasport_footer").appendChild(tr)                        
+            })
         }
     }
 }

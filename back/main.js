@@ -15,14 +15,14 @@ fastify.register(autoload, {
 });
 fastify.register((fastify, opts, next) => {
     fastify.register(cors, {
-        origin: "http://127.0.0.1:5500",
+        origin: "http://localhost:5501",
         methods: ["POST", "GET", "PUT", "DELETE"],
     })  
     next()
 })
 
 fastify.addHook('onRequest', async (request, reply) => {
-    reply.header("Access-Control-Allow-Origin", "http://127.0.0.1:5500")
+    reply.header("Access-Control-Allow-Origin", "http://localhost:5501")
 })
 
 fastify.register(auth)

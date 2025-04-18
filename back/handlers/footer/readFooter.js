@@ -12,7 +12,7 @@ async function ReadFooter(object) {
 
     try {
         //Запрос на получение записей
-        const results = await client.query(`SELECT "press_date", "shift_number", "calc_number", "press_number", "electrode_diameter", "part_count", "part_mass", "up_impoverishment", "down_impoverishment", "electrode_length", "calc_mass" FROM "Pasports"
+        const results = await client.query(`SELECT "press_date", "shift_number", "press_number", "electrode_diameter", "part_count", "part_mass", "up_impoverishment", "down_impoverishment", "electrode_length", "calc_mass" FROM "Pasports"
                                             INNER JOIN "Timesheets" ON "Timesheets".id = "Pasports".timesheet_id
                                             INNER JOIN "Calculations" ON "Calculations".id = "Pasports".calc_id`)
 

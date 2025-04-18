@@ -1,125 +1,46 @@
 const { jsPDF } = window.jspdf
 
-//Вешаем обработчик событий после загрузки DOM-дерева
 document.addEventListener("DOMContentLoaded", () => {
     loadPassport()
     document.getElementById("print_btn").onclick = printPasport
 })
 
-//Загружаем данные о паспорте
 function loadPassport() {
-    //Создаём экземпляр запроса
     const xhttp = new XMLHttpRequest()
-    
-    //Запрос на получение данных паспорта
-    xhttp.open("GET", "http://localhost:3000/pasport", true)
-    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
-    xhttp.send()
 
-    //Ответ сервера
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+    // === 1. Получаем данные паспорта ===
+    xhttp.open("GET", "http://localhost:3000/pasport", true)
+    xhttp.onload = function() {
+        if (this.status == 200) {
             let response = JSON.parse(xhttp.responseText.substring(1, xhttp.responseText.length-1))
-             //Заполняем нужные поля данными с сервера
             Object.keys(response).forEach(element => {
                 document.getElementById(element).innerText += response[element]
-            });
+            })
 
-            //Запрос на получение данных таблицы
-            xhttp.open("GET", "http://localhost:3000/electrode", true)
-            xhttp.setRequestHeader("Access-Control-Allow-Methods", '*')
-            xhttp.setRequestHeader("Access-Control-Allow-Origin", 'http://localhost:3000')
-            xhttp.send()
-
-            //Ответ сервера
-            xhttp.onreadystatechange = function() {
-                let massCount = 0
-                if (this.readyState == 4 && this.status == 200) {
-                    response = JSON.parse(xhttp.responseText)
-
-                    //Заполняем необходимые поля
-                    response.forEach((item) =>{
-                        const pasportDataArray = ['charge_type', 'charge_mark', 'index', 'fraction', 'mass', 'vshm', 'nv', 'o_content', 'fe_content', 'place_number', 'batch', 'manufacturer'] 
-                        //Подготавливаем строку в таблице
-                        let tr = document.createElement('tr')
-                        let th = document.createElement('th')
-
-                        th.scope = "row"
-                        th.textContent = item[pasportDataArray[0]]
-                        //Создаём иерархию в таблице
-                        tr.appendChild(th)
-
-                        
-
-                        for (let index = 1; index < pasportDataArray.length; index++) {
-                            const element = item[pasportDataArray[index]]
-                            let th_element = document.createElement('th')
-                            th_element.textContent = element
-                            tr.appendChild(th_element)
-                        }
-                        /*
-                        <tr>
-                            <th scope="row">Лигатура</th>
-                            <th>К4-3</th>
-                            <th>ДП</th>
-                            <th>-</th>
-                            <th>334.69</th>
-                            <th>0</th>
-                            <th>-</th>
-                            <th>-</th>
-                            <th>-</th>
-                            <th>я123</th>
-                            <th>24-3/22-135</th>
-                            <th>УРАЛПРЕДМЕТ</th>
-                        </tr>
-                        */
-
-                        //Запихиваем готовую строку в таблицу
-                        document.getElementById("pasport_table").appendChild(tr)
-                        
-                        massCount += Number(tr.children[4].textContent)
-                        
-                    })
-                    document.getElementById("mass").textContent = massCount.toFixed() + " кг"
-                }
-            }
+            // === 2. После успешного получения паспорта — получаем таблицу ===
+            loadElectrode()
         }
     }
-
-    //Запрос на получение данных подвала паспорта
-    xhttp.open("GET", "http://localhost:3000/footer", true)
-    xhttp.setRequestHeader("Access-Control-Allow-Methods", 'GET,POST,PUT,DELETE')
-    xhttp.setRequestHeader("Access-Control-Allow-Headers", 'Origin,Content-type,Accept')
     xhttp.send()
 
-    //Ответ сервера
-    xhttp.onreadystatechange = function() {
-        function format(date) {
-            var d = date.getDate();
-            var m = date.getMonth() + 1;
-            var y = date.getFullYear();
-            return '' + (d <= 9 ? '0' + d : d) + '-' + (m<=9 ? '0' + m : m) + '-' + y;
-        }
+    // === 3. Получаем данные подвала независимо от паспорта и таблицы ===
+    loadFooter()
+}
 
-        if (this.readyState == 4 && this.status == 200) {
-            let response = JSON.parse(xhttp.responseText.substring(1, xhttp.responseText.length-1))
-            response = JSON.parse(xhttp.responseText)
-
-            //Заполняем необходимые поля
-            response.forEach((item) =>{
-                const pasportDataArray = Object.keys(item) 
-                console.log(item)
-                //Подготавливаем строку в таблице
+function loadElectrode() {
+    const xhttp = new XMLHttpRequest()
+    xhttp.open("GET", "http://localhost:3000/electrode", true)
+    xhttp.onload = function() {
+        if (this.status == 200) {
+            let response = JSON.parse(xhttp.responseText)
+            let massCount = 0
+            response.forEach((item) => {
+                const pasportDataArray = ['charge_type', 'charge_mark', 'index', 'fraction', 'mass', 'vshm', 'nv', 'o_content', 'fe_content', 'place_number', 'batch', 'manufacturer']
                 let tr = document.createElement('tr')
                 let th = document.createElement('th')
-                let date = new Date(item[pasportDataArray[0]])
-                
-                th.textContent = format(date)
-                //Создаём иерархию в таблице
+                th.scope = "row"
+                th.textContent = item[pasportDataArray[0]]
                 tr.appendChild(th)
-
-                    
 
                 for (let index = 1; index < pasportDataArray.length; index++) {
                     const element = item[pasportDataArray[index]]
@@ -128,45 +49,94 @@ function loadPassport() {
                     tr.appendChild(th_element)
                 }
 
+                document.getElementById("pasport_table").appendChild(tr)
+                massCount += Number(tr.children[4].textContent)
+            })
+            document.getElementById("mass").textContent = massCount.toFixed() + " кг"
+        }
+    }
+    xhttp.send()
+}
+
+function loadFooter() {
+    const xhttp = new XMLHttpRequest()
+    xhttp.open("GET", "http://localhost:3000/footer", true)
+    xhttp.onload = function() {
+        if (this.status == 200) {
+            let response = JSON.parse(xhttp.responseText)
+            response.forEach((item) => {
+                const pasportDataArray = Object.keys(item)
+                let tr = document.createElement('tr')
+                let th = document.createElement('th')
+                let date = new Date(item[pasportDataArray[0]])
+                th.textContent = format(date)
+                tr.appendChild(th)
+                for (let index = 1; index <= pasportDataArray.length; index++) {
+                    const element = item[pasportDataArray[index]]
+                    let th_element = document.createElement('th')
+                    th_element.textContent = element
+                    tr.appendChild(th_element)
+                }
                 for (let i = 0; i < 3; i++) {
                     let th = document.createElement('th')
                     tr.appendChild(th)
                 }
-                    
-                    //Запихиваем готовую строку в таблицу
-                    document.getElementById("pasport_footer").appendChild(tr)                        
+                document.getElementById("pasport_footer").appendChild(tr)
             })
         }
     }
+    xhttp.send()
 }
 
-async function printPasport() {
-    let doc = new jsPDF()
-    let head = document.getElementById("head")
-    let table = document.getElementById("table")
-    const oldHeadStyle = head.style
-    const oldTableStyle = table.style
-    head.style.margin = 0
-    head.style.width = table.style.width = '1112px'
-    head.style.borderRadius = '0'
-    table.style.borderRadius = '0'
-    table.style.marginLeft = '0'
-    table.style.marginRight = '0'
-    let div = document.getElementById("print_tbl")
-    div.style.backgroundColor = "#FFF"
-    await html2canvas(div)
-            .then(canvas => {
-                let width = canvas.width
-                let height = canvas.height
+function format(date) {
+    var d = date.getDate();
+    var m = date.getMonth() + 1;
+    var y = date.getFullYear();
+    return '' + (d <= 9 ? '0' + d : d) + '-' + (m<=9 ? '0' + m : m) + '-' + y;
+}
 
-                doc.setPage(1)
-                let dataURL = canvas.toDataURL('image/jpeg')
-                console.log(dataURL);
-                const scaler = .189
-                doc.addImage(dataURL, 'JPEG', 0, 0, (width*scaler), (height*scaler) )
-            })
+function printPasport() {
+    const printArea = document.querySelector('[print_type="1"]');
 
-    doc.save("pasport.pdf")
-    head.style = oldHeadStyle
-    table.style = oldTableStyle
+    // Убираем все элементы, которые не являются частью выделенной области для печати
+    const allElements = document.body.querySelectorAll('*');
+    allElements.forEach(el => {
+        if (!el.closest('[print_type="1"]')) {
+            el.style.display = 'none';
+        }
+    });
+
+    // Применяем стили для печати
+    const style = document.createElement('style');
+    style.innerHTML = `
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            html, body {
+                width: 100%;
+                height: 100%;
+            }
+            @page {
+                margin: 0;
+            }
+            .header, .footer, .navigation {
+                display: none;
+            }
+            .print-header, .print-footer {
+                display: none;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // Печать содержимого
+    window.print();
+
+    // Ожидаем, пока окно печати откроется, затем восстанавливаем исходное состояние
+    setTimeout(() => {
+        document.head.removeChild(style);
+        window.location.reload();
+    }, 500);
 }

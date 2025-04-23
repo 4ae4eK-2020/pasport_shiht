@@ -42,9 +42,17 @@ module.exports = function(fastify, opts, next) {
     fastify.route({
         method: 'GET',
         url: '/pasport',
-        schema:{},
+        schema:{
+            querystring: {
+                type: 'object',
+                properties: {
+                  id: { type: 'string' }
+                },
+                required: ['id']
+              }
+        },
         async handler(request, reply) {
-            const data = await ReadPasport(request.body)
+            const data = await ReadPasport(request.query)
             reply.status(data.statusCode)
             reply.send(data.message)
         }

@@ -16,7 +16,8 @@ async function ReadPasport(object) {
                                             INNER JOIN "Calculations" ON "Calculations".id = "Pasports".calc_id
                                             INNER JOIN "Contracts" ON "Contracts".id = "Pasports".contract_id
                                             INNER JOIN "Customers" ON "Customers".id = "Contracts".customer_id
-                                            INNER JOIN "Appointments" ON "Appointments".id = "Pasports".appointment_id`)
+                                            INNER JOIN "Appointments" ON "Appointments".id = "Pasports".appointment_id
+                                            WHERE "Pasports".id = $1`, [object.id])
 
         
         //В случае успеха отправит записи в виде массива объектов, иначе выведет ошибку

@@ -1,15 +1,43 @@
-const { jsPDF } = window.jspdf
+let formId = 1
 
-document.addEventListener("DOMContentLoaded", () => {
-    loadPassport()
-    document.getElementById("print_btn").onclick = printPasport
-})
+function handleFormChange(select) {
+    setCookie("selectedForm", select.value, 7);
+    console.log("Выбрана форма:", select.value);
+  }
 
-function loadPassport() {
+  document.addEventListener("DOMContentLoaded", () => {
+    const savedForm = getCookie("selectedForm");
+    const select = document.getElementById("formSelect");
+
+    if (savedForm) {
+        select.value = savedForm;
+        loadPassport(savedForm); // загружаем только если значение есть
+    }
+
+    select.addEventListener("change", function () {
+        const formId = this.value;
+        setCookie("selectedForm", formId, 7); // не забудь обновить куку
+        loadPassport(formId); // загружаем выбранную форму
+    });
+
+    document.getElementById("print_btn").onclick = printPasport;
+});
+
+
+function loadPassport(_formId) {
+    const pasportFields = ['charge_type', 'charge_mark', 'index', 'fraction', 'mass', 'vshm', 'nv', 'o_content', 'fe_content', 'place_number', 'batch', 'manufacturer']
+    pasportFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = "";
+    });
+
+    document.getElementById("request_number").innerHTML = "Паспорт № ";
+    document.getElementById("pasport_footer").innerHTML = "";
+
     const xhttp = new XMLHttpRequest()
 
     // === 1. Получаем данные паспорта ===
-    xhttp.open("GET", "http://localhost:3000/pasport", true)
+    xhttp.open("GET", `http://localhost:3000/pasport?id=${_formId}`, true)
     xhttp.onload = function() {
         if (this.status == 200) {
             let response = JSON.parse(xhttp.responseText.substring(1, xhttp.responseText.length-1))
@@ -139,4 +167,26 @@ function printPasport() {
         document.head.removeChild(style);
         window.location.reload();
     }, 500);
+}
+
+function setCookie(name, value, days) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000)); // Срок жизни куки
+    const expires = "expires=" + d.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/"; // Устанавливаем куку
+}
+
+function getCookie(name) {
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const cookies = decodedCookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let c = cookies[i];
+      while (c.charAt(0) === ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length + 1, c.length);
+      }
+    }
+    return "";
 }

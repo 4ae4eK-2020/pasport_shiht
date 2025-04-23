@@ -45,6 +45,7 @@ span {
 table {
     border-collapse: separate;
     overflow: hidden;
+    width: 100%;
   }
   
   th, td {
@@ -107,4 +108,15 @@ tbody tr:last-child td:last-child { border-bottom-right-radius: 15px; }
     font-size: 15px;
     text-align: start;
     line-height: 33px;
+}
+
+@media print {
+    * {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    #table_div {
+        text-align: center;
+    }
 }

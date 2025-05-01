@@ -32,6 +32,30 @@ async function ReadPasport(object) {
     return data
 }
 
+async function ReadRequestNumber(object) {
+     //Объект с данными
+     const data = {
+        message: 'error',
+        statusCode: 400
+    }
+
+    //Подключение к БД
+    const client = await pool.connect()
+
+    try {
+        const results = await client.query(`SELECT id, request_number FROM "Pasports"`)
+
+        data.message = results.rows
+        data.statusCode = 200
+    } catch (error) {
+        console.error(error.name, error.stack)
+    } finally {
+        client.release()
+    }
+    return data
+}
+
 module.exports = {
-    ReadPasport: ReadPasport
+    ReadPasport: ReadPasport,
+    ReadRequestNumber : ReadRequestNumber
 }

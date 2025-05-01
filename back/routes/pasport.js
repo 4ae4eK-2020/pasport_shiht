@@ -1,6 +1,6 @@
 //const { CreatePasport } = require('../handlers/pasport/createPasport')
 //const { DeletePasport } = require('../handlers/pasport/deletePasport')
-const { ReadPasport } = require('../handlers/pasport/readPasport')
+const { ReadPasport, ReadRequestNumber } = require('../handlers/pasport/readPasport')
 //const { UpdatePasport } = require('../handlers/pasport/updatePasport')
 
 module.exports = function(fastify, opts, next) {
@@ -53,6 +53,20 @@ module.exports = function(fastify, opts, next) {
         },
         async handler(request, reply) {
             const data = await ReadPasport(request.query)
+            reply.status(data.statusCode)
+            reply.send(data.message)
+        }
+    })
+    
+    next()
+
+    //read RequestNumber
+    fastify.route({
+        method: 'GET',
+        url: '/requestNumber',
+        schema:{},
+        async handler(request, reply) {
+            const data = await ReadRequestNumber(request.body)
             reply.status(data.statusCode)
             reply.send(data.message)
         }

@@ -33,6 +33,10 @@ function loadPassport(_formId) {
 
     document.getElementById("request_number").innerHTML = "Паспорт № ";
     document.getElementById("pasport_footer").innerHTML = "";
+    document.getElementById("contract").innerHTML = "";
+    document.getElementById("customer").innerHTML = "";
+    document.getElementById("appointment").innerHTML = "";
+    document.getElementById("ntc").innerHTML = "";
 
     const xhttp = new XMLHttpRequest()
 
@@ -55,7 +59,29 @@ function loadPassport(_formId) {
     loadFooter()
 }
 
+    const xhttp = new XMLHttpRequest()
+
+    // === 1. Получаем данные паспорта ===
+    xhttp.open("GET", `http://localhost:3000/requestNumber`, true)
+    xhttp.onload = function() {
+        if(this.status == 200) {
+            let response = JSON.parse(xhttp.responseText)
+            let formSelect = document.getElementById("formSelect")
+            formSelect.innerHTML = ""
+            response.forEach(element => {
+                let option = document.createElement("option")
+                option.value = element.id
+                option.textContent = `Паспорт № ${element.request_number}`
+                formSelect.appendChild(option)
+            });
+        }
+    }
+    xhttp.send()
+
 function loadElectrode() {
+    const table = document.getElementById("pasport_table");
+    table.innerHTML = ""; // ← ОЧИСТКА перед добавлением новых строк
+
     const xhttp = new XMLHttpRequest()
     xhttp.open("GET", "http://localhost:3000/electrode", true)
     xhttp.onload = function() {
@@ -77,7 +103,7 @@ function loadElectrode() {
                     tr.appendChild(th_element)
                 }
 
-                document.getElementById("pasport_table").appendChild(tr)
+                table.appendChild(tr)
                 massCount += Number(tr.children[4].textContent)
             })
             document.getElementById("mass").textContent = massCount.toFixed() + " кг"
@@ -87,6 +113,9 @@ function loadElectrode() {
 }
 
 function loadFooter() {
+    const footer = document.getElementById("pasport_footer");
+    footer.innerHTML = ""; // ← ОЧИСТКА перед добавлением новых строк
+
     const xhttp = new XMLHttpRequest()
     xhttp.open("GET", "http://localhost:3000/footer", true)
     xhttp.onload = function() {
@@ -109,7 +138,7 @@ function loadFooter() {
                     let th = document.createElement('th')
                     tr.appendChild(th)
                 }
-                document.getElementById("pasport_footer").appendChild(tr)
+                footer.appendChild(tr)
             })
         }
     }
